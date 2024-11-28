@@ -36,7 +36,7 @@ import frc.robot.subsystems.led.*;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO_Real;
 import frc.robot.subsystems.outtake.OuttakeIO_Sim;
-import frc.robot.subsystems.vision.Vision;
+// import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.NoteVisualizer;
 import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -49,11 +49,11 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
 
-  Vision vision =
-      new Vision(
-          VisionConstants.kBackCameraInfo,
-          VisionConstants.kSideCameraInfo,
-          VisionConstants.kNoteCameraName);
+  // Vision vision =
+  //     new Vision(
+  //         VisionConstants.kBackCameraInfo,
+  //         VisionConstants.kSideCameraInfo,
+  //         VisionConstants.kNoteCameraName);
 
   public static enum RobotMode {
     SIM,
@@ -112,7 +112,8 @@ public class Robot extends LoggedRobot {
   private LEDs led = new LEDs();
 
   private Superstructure superstructure =
-      new Superstructure(drivebase, intake, outtake, climb, led);
+      // new Superstructure(drivebase, intake, outtake, climb, led);
+      new Superstructure(drivebase);
 
   private Alliance currentAlliance = Alliance.Blue;
 
@@ -177,44 +178,44 @@ public class Robot extends LoggedRobot {
     driver
         .a()
         .whileTrue(
-            Commands.either(
-                drivebase.noteAim(
-                    driver::getLeftY, driver::getLeftX, driver::getRightX, vision::getNoteX),
+                // drivebase.noteAim(
+                //     driver::getLeftY, driver::getLeftX, driver::getRightX),
                 Commands.either(
                     drivebase
-                        .goToShotPoint()
-                        .alongWith(superstructure.readyPiece())
-                        .andThen(superstructure.shootPiece()),
-                    drivebase.goToAmpPose().alongWith(superstructure.readyPiece()),
-                    superstructure::inSpeakerMode),
-                intake::pivotSetpointIsMin));
+                        .goToShotPoint(),
+                        // .alongWith(superstructure.readyPiece())
+                        // .andThen(superstructure.shootPiece()),
+                    // drivebase.goToAmpPose().alongWith(superstructure.readyPiece()),
+                    drivebase.goToAmpPose(),
+                    superstructure::inSpeakerMode)
+                );
 
     driver
         .rightTrigger()
-        .onTrue(superstructure.extendIntake())
+        // .onTrue(superstructure.extendIntake())
         .onFalse(superstructure.retractIntake());
-    driver.leftTrigger().onTrue(superstructure.shootPiece());
+    // driver.leftTrigger().onTrue(superstructure.shootPiece());
 
-    operator.button(1).onTrue(superstructure.ampMode());
-    operator.button(2).onTrue(superstructure.speakerMode());
-    operator.button(3).onTrue(superstructure.readyPiece());
+    // operator.button(1).onTrue(superstructure.ampMode());
+    // operator.button(2).onTrue(superstructure.speakerMode());
+    // operator.button(3).onTrue(superstructure.readyPiece());
 
-    operator.button(4).onTrue(superstructure.raiseClimbers());
-    operator.button(4).onFalse(superstructure.lowerClimbers());
-    operator.button(5).onTrue(superstructure.lowerClimbers()); // This button can be repurposed
+    // operator.button(4).onTrue(superstructure.raiseClimbers());
+    // operator.button(4).onFalse(superstructure.lowerClimbers());
+    // operator.button(5).onTrue(superstructure.lowerClimbers()); // This button can be repurposed
 
-    operator.button(6).onTrue(superstructure.spitOutNotes());
-    operator.button(6).onFalse(superstructure.retractIntake());
+    // operator.button(6).onTrue(superstructure.spitOutNotes());
+    // operator.button(6).onFalse(superstructure.retractIntake());
 
-    operator.button(7).onTrue(superstructure.outtakeEject());
+    // operator.button(7).onTrue(superstructure.outtakeEject());
     operator
         .button(7)
         .onFalse(superstructure.retractIntake().andThen(outtake.changeRPMSetpoint(0)));
 
-    operator.button(8).onTrue(superstructure.processNote());
+    // operator.button(8).onTrue(superstructure.processNote());
 
     operator.button(9).onTrue(superstructure.firstReset());
-    operator.button(9).onFalse(superstructure.secondReset());
+    // operator.button(9).onFalse(superstructure.secondReset());
 
     // debug
     //     .button(1)
@@ -234,40 +235,40 @@ public class Robot extends LoggedRobot {
     if (DriverStation.getAlliance().isPresent()) {
       if (DriverStation.getAlliance().get() != currentAlliance) {
         currentAlliance = DriverStation.getAlliance().get();
-        try {
-          vision.setFieldTags(currentAlliance);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+        // try {
+        //   // vision.setFieldTags(currentAlliance);
+        // } catch (IOException e) {
+        //   e.printStackTrace();
+        // }
       }
     }
 
-    var backResult = vision.getBackCameraResult();
-    var sideResult = vision.getSideCameraResult();
+    // var backResult = vision.getBackCameraResult();
+    // var sideResult = vision.getSideCameraResult();
 
-    if (backResult.timestamp != 0.0) {
-      if (Math.abs(backResult.estimatedPose.getZ()) < 0.3) {
-        Logger.recordOutput("Vision/BackGlobalEstimate", backResult.estimatedPose);
-        if (RobotBase.isReal()) {
-          drivebase.addVisionMeasurement(
-              backResult.estimatedPose.toPose2d(), backResult.timestamp, backResult.stdDevs);
-        }
-      } else {
-        Logger.recordOutput("Vision/ThrownOutBackGlobalEstimate", backResult.estimatedPose);
-      }
-    }
+    // if (backResult.timestamp != 0.0) {
+    //   if (Math.abs(backResult.estimatedPose.getZ()) < 0.3) {
+    //     Logger.recordOutput("Vision/BackGlobalEstimate", backResult.estimatedPose);
+    //     if (RobotBase.isReal()) {
+    //       drivebase.addVisionMeasurement(
+    //           backResult.estimatedPose.toPose2d(), backResult.timestamp, backResult.stdDevs);
+    //     }
+    //   } else {
+    //     Logger.recordOutput("Vision/ThrownOutBackGlobalEstimate", backResult.estimatedPose);
+    //   }
+    // }
 
-    if (sideResult.timestamp != 0.0) {
-      if (Math.abs(sideResult.estimatedPose.getZ()) < 0.3) {
-        Logger.recordOutput("Vision/SideGlobalEstimate", sideResult.estimatedPose);
-        if (RobotBase.isReal()) {
-          drivebase.addVisionMeasurement(
-            sideResult.estimatedPose.toPose2d(), sideResult.timestamp, sideResult.stdDevs);
-        }
-      } else {
-        Logger.recordOutput("Vision/ThrownOutSideGlobalEstimate", sideResult.estimatedPose);
-      }
-    }
+    // if (sideResult.timestamp != 0.0) {
+    //   if (Math.abs(sideResult.estimatedPose.getZ()) < 0.3) {
+    //     Logger.recordOutput("Vision/SideGlobalEstimate", sideResult.estimatedPose);
+    //     if (RobotBase.isReal()) {
+    //       drivebase.addVisionMeasurement(
+    //         sideResult.estimatedPose.toPose2d(), sideResult.timestamp, sideResult.stdDevs);
+    //     }
+    //   } else {
+    //     Logger.recordOutput("Vision/ThrownOutSideGlobalEstimate", sideResult.estimatedPose);
+    //   }
+    // }
   }
 
   @Override
@@ -303,6 +304,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void simulationPeriodic() {
-    vision.simulationPeriodic(drivebase.getPose());
+    // vision.simulationPeriodic(drivebase.getPose());
   }
 }

@@ -93,17 +93,17 @@ public class Constants {
 
     public static final int kPDH = 1;
 
-    public static final int kFrontLeftDrive = 3;
-    public static final int kBackLeftDrive = 4;
-    public static final int kFrontRightDrive = 2;
-    public static final int kBackRightDrive = 5;
+    public static final int kFrontLeftDrive = 12;
+    public static final int kBackLeftDrive = 13;
+    public static final int kFrontRightDrive = 3;
+    public static final int kBackRightDrive = 2;
 
-    public static final int kFrontLeftTurn = 7;
-    public static final int kBackLeftTurn = 8;
-    public static final int kFrontRightTurn = 6;
-    public static final int kBackRightTurn = 9;
+    public static final int kFrontLeftTurn = 8;
+    public static final int kBackLeftTurn = 9;
+    public static final int kFrontRightTurn = 7;
+    public static final int kBackRightTurn = 6;
 
-    public static final int kPigeon = 10;
+    public static final int kPigeon = 4;
 
     public static final int kLeftFlywheel = 11;
     public static final int kRightFlywheel = 12;
